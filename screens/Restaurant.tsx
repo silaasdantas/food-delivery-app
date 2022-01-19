@@ -57,13 +57,23 @@ const Restaurant = ({ route, navigation }: any) => {
     }
   }
 
-  function getOrderQty(menuId) {
+  function getOrderQty(menuId: any) {
     let orderItem = orderItems.filter((a) => a.menuId == menuId);
 
     if (orderItem.length > 0) {
       return orderItem[0].qty;
     }
     return 0;
+  }
+
+  function getBasketItemCount() {
+    let itemCount = orderItems.reduce((a, b) => a + (b.qty || 0), 0);
+    return itemCount;
+  }
+
+  function sumOrder() {
+    let total = orderItems.reduce((a, b) => a + (b.total || 0), 0);
+    return total;
   }
 
   function renderHeader() {
@@ -310,8 +320,10 @@ const Restaurant = ({ route, navigation }: any) => {
               borderBottomWidth: 1,
             }}
           >
-            <Text style={{ ...FONTS.h3 }}>items in Cart</Text>
-            <Text style={{ ...FONTS.h3 }}>$45</Text>
+            <Text style={{ ...FONTS.h3 }}>
+              {getBasketItemCount()} items in Cart
+            </Text>
+            <Text style={{ ...FONTS.h3 }}>${sumOrder()}</Text>
           </View>
           <View
             style={{
@@ -380,6 +392,12 @@ const Restaurant = ({ route, navigation }: any) => {
                 alignItems: "center",
                 borderRadius: SIZES.radius,
               }}
+              onPress={() =>
+                navigation.navigate("OrderDelivery", {
+                  restaurant: restaurant,
+                  currentLocation: currentLocation,
+                })
+              }
             >
               <Text style={{ color: COLORS.white, ...FONTS.h2 }}>Order</Text>
             </TouchableOpacity>
